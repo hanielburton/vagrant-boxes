@@ -56,7 +56,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 # define hostname
-NAME = "oracle-18c-apex"
+NAME = "oracle-18c-apex192"
 
 unless Vagrant.has_plugin?("vagrant-reload")
   puts 'Installing vagrant-reload Plugin...'
@@ -89,7 +89,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   # change memory size
   config.vm.provider "virtualbox" do |v|
-    v.memory = 2048
+    v.memory = 4096
+    v.cpus = 4
     v.name = NAME
   end
 
@@ -113,9 +114,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.hostname = NAME
 
   # Oracle port forwarding
-  config.vm.network "forwarded_port", guest: 1521, host: 1521
+  config.vm.network "forwarded_port", guest: 1521, host: 1522
   config.vm.network "forwarded_port", guest: 5500, host: 5500
-  config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.network "forwarded_port", guest: 8080, host: 18080
+  config.vm.network "forwarded_port", guest: 19999, host: 29999
  
   # Provision and update Oracle Linux 7
   config.vm.provision "shell", path: "scripts/install.sh"
@@ -131,5 +133,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", path: "scripts/apex.sh"
   # Provision Oracle Rest Data Services on the first run
   config.vm.provision "shell", path: "scripts/ords.sh"
-
+  # Provision Netdata on the first run
+  config.vm.provision "shell", path: "scripts/netdata.sh"
+  
 end
